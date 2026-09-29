@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f6fa">
+<title>Maytoni Training | River to Light</title>
+<style>
+:root{--violet:#5b24d6;--plum:#24103f;--ink:#1e1b26;--muted:#6e6878;--lavender:#d9cdf5;--paper:#f7f6fa;--rule:#ded9e7}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+main{max-width:1280px;margin:auto;padding:32px 38px 24px}
+.eyebrow{font-size:13px;letter-spacing:.14em;font-weight:700;color:var(--violet);text-transform:uppercase}
+h1{font-size:clamp(30px,3.5vw,48px);line-height:1.04;letter-spacing:-.03em;margin:13px 0 9px;color:var(--plum)}
+.intro{font-size:19px;color:var(--muted);margin:0;max-width:930px;line-height:1.45}
+.rule{height:1px;background:var(--rule);margin:23px 0 18px}
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,.8fr);gap:30px;align-items:center}
+figure{margin:0;min-width:0}
+svg{width:100%;height:auto;display:block;background:#fbfaff;border:1px solid var(--rule);border-radius:4px}
+.controls{border-left:1px solid var(--rule);padding-left:25px}
+.control{margin:0 0 23px}
+.control label{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:700;color:var(--plum);gap:12px}
+.control output{font-size:21px;color:var(--violet);font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=range]{width:100%;margin:13px 0 6px;accent-color:var(--violet);cursor:pointer}
+input[type=range]:focus-visible{outline:3px solid var(--violet);outline-offset:4px;border-radius:5px}
+.scale{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.power{margin-top:9px;padding-top:17px;border-top:1px solid var(--rule)}
+.formula{font-size:16px;color:var(--muted)}
+.reading{display:flex;align-items:baseline;gap:9px;margin-top:6px}
+.reading strong{font-size:clamp(44px,5.4vw,68px);line-height:1;color:var(--plum);font-variant-numeric:tabular-nums}
+.reading span{font-size:18px;color:var(--muted)}
+.bar{height:8px;margin-top:14px;background:#e6e1ed;overflow:hidden;border-radius:5px}
+.bar span{height:100%;width:0;display:block;background:var(--violet);transition:width .18s ease}
+.outputs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.metric{padding:10px 11px;background:#efebf5;border-radius:4px}
+.metric span{display:block;color:var(--muted);font-size:12px}
+.metric strong{display:block;margin-top:3px;color:var(--plum);font-size:18px;font-variant-numeric:tabular-nums}
+.note{font-size:14px;line-height:1.45;color:var(--muted);margin:0}
+footer{border-top:1px solid var(--rule);margin-top:17px;padding-top:12px;font-size:13px;color:var(--muted);line-height:1.45}
+.flow-dashes{animation:flow 2.8s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-80}}
+@media(max-width:850px){main{padding:24px 22px}.layout{grid-template-columns:1fr;gap:18px}.controls{border-left:0;padding:20px 0 0;border-top:1px solid var(--rule)}}
+@media(prefers-reduced-motion:reduce){.bar span,.flow-dashes{transition:none;animation:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="eyebrow">Maytoni training / electrical fundamentals</div>
+<h1>The river powers the lamp</h1>
+<p class="intro">Adjust the river slope and width. More power makes the water wheel turn faster and the lamp shine brighter.</p>
+<div class="rule"></div>
+<div class="layout">
+<figure aria-label="Interactive river, water wheel, generator and lamp model">
+<svg viewBox="0 0 900 470" role="img" aria-labelledby="sceneTitle sceneDesc">
+<title id="sceneTitle">River flow drives a water wheel and lights a lamp</title>
+<desc id="sceneDesc">Voltage changes the river slope. Current changes its width. Their product controls the wheel speed and modeled lamp brightness.</desc>
+<defs>
+<linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8e6be4"/><stop offset="1" stop-color="#5b24d6"/></linearGradient>
+<linearGradient id="bank" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#eee9f5"/><stop offset=".5" stop-color="#e5dff0"/><stop offset="1" stop-color="#eee9f5"/></linearGradient>
+<radialGradient id="lampHaloGradient"><stop offset="0" stop-color="#ffe59a" stop-opacity=".75"/><stop offset=".45" stop-color="#ffd66f" stop-opacity=".35"/><stop offset="1" stop-color="#ffd66f" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="900" height="470" fill="#fbfaff"/>
+<path d="M22 433H875" stroke="#ded9e7" stroke-width="2"/>
+<text x="38" y="44" fill="#24103f" font-size="14" font-family="Arial" font-weight="700" letter-spacing="1">SLOPE = VOLTAGE (U)</text>
+<text x="326" y="44" fill="#24103f" font-size="14" font-family="Arial" font-weight="700" letter-spacing="1">RIVER WIDTH = CURRENT (I)</text>
+<path id="riverBank" d="M40 105 C145 105 220 108 300 116 C390 125 470 145 525 188 C548 188 560 193 580 204" fill="none" stroke="url(#bank)" stroke-width="92" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="waterPath" d="M40 105 C145 105 220 108 300 116 C390 125 470 145 525 188 C548 188 560 193 580 204" fill="none" stroke="url(#water)" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="streamline" class="flow-dashes" d="M40 105 C145 105 220 108 300 116 C390 125 470 145 525 188 C548 188 560 193 580 204" fill="none" stroke="#e7ddff" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 18" opacity=".95"/>
+<line x1="40" y1="86" x2="40" y2="124" stroke="#6e6878" stroke-width="2" stroke-dasharray="4 5"/>
+<text x="44" y="151" fill="#6e6878" font-size="13" font-family="Arial">flowing water</text>
+
+<g id="wheelAssembly" transform="translate(0 0)">
+  <g id="wheelRotor" transform="rotate(0 620 246)">
+    <circle cx="620" cy="246" r="57" fill="#ffffff" fill-opacity=".78" stroke="#49346b" stroke-width="7"/>
+    <g stroke="#49346b" stroke-width="5" stroke-linecap="round">
+      <line x1="620" y1="246" x2="620" y2="190"/>
+      <line x1="620" y1="246" x2="660" y2="206"/>
+      <line x1="620" y1="246" x2="676" y2="246"/>
+      <line x1="620" y1="246" x2="660" y2="286"/>
+      <line x1="620" y1="246" x2="620" y2="302"/>
+      <line x1="620" y1="246" x2="580" y2="286"/>
+      <line x1="620" y1="246" x2="564" y2="246"/>
+      <line x1="620" y1="246" x2="580" y2="206"/>
+    </g>
+    <g fill="#7a5bb8" stroke="#49346b" stroke-width="2">
+      <rect x="614" y="181" width="12" height="24" rx="3"/>
+      <rect x="652" y="201" width="24" height="12" rx="3" transform="rotate(45 664 207)"/>
+      <rect x="667" y="240" width="24" height="12" rx="3"/>
+      <rect x="652" y="279" width="24" height="12" rx="3" transform="rotate(-45 664 285)"/>
+      <rect x="614" y="287" width="12" height="24" rx="3"/>
+      <rect x="564" y="279" width="24" height="12" rx="3" transform="rotate(45 576 285)"/>
+      <rect x="549" y="240" width="24" height="12" rx="3"/>
+      <rect x="564" y="201" width="24" height="12" rx="3" transform="rotate(-45 576 207)"/>
+    </g>
+    <circle cx="620" cy="246" r="13" fill="#f4bc3d" stroke="#49346b" stroke-width="4"/>
+  </g>
+  <path d="M590 292L579 332M650 292L661 332M578 332H662" fill="none" stroke="#8d829e" stroke-width="8" stroke-linecap="round"/>
+  <line x1="677" y1="246" x2="696" y2="246" stroke="#49346b" stroke-width="8" stroke-linecap="round"/>
+  <rect x="696" y="225" width="47" height="42" rx="5" fill="#eee9f5" stroke="#49346b" stroke-width="3"/>
+  <circle cx="719" cy="246" r="10" fill="#8e6be4" stroke="#49346b" stroke-width="2"/>
+  <text x="719" y="291" text-anchor="middle" fill="#6e6878" font-size="12" font-family="Arial" font-weight="700">GENERATOR</text>
+  <text x="620" y="344" text-anchor="middle" fill="#24103f" font-size="14" font-family="Arial" font-weight="700">WATER WHEEL</text>
+</g>
+
+<path id="wireA" d="M734 246V195H764V179" fill="none" stroke="#b49e65" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".25"/>
+<path id="wireB" d="M740 246V202H774V179" fill="none" stroke="#b49e65" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".25"/>
+<circle id="lampHalo" cx="780" cy="100" r="96" fill="url(#lampHaloGradient)" opacity=".08"/>
+<g id="lampRays" stroke="#f1bd41" stroke-width="4" stroke-linecap="round" opacity=".12">
+  <line x1="780" y1="28" x2="780" y2="17"/>
+  <line x1="727" y1="48" x2="719" y2="40"/>
+  <line x1="833" y1="48" x2="841" y2="40"/>
+  <line x1="712" y1="96" x2="700" y2="96"/>
+  <line x1="848" y1="96" x2="860" y2="96"/>
+</g>
+<g id="lampLit">
+  <path id="lampShell" d="M780 43C749 43 730 65 730 94C730 113 741 128 754 140L758 151H802L806 140C819 128 830 113 830 94C830 65 811 43 780 43Z" fill="#b3a991" stroke="#8d829e" stroke-width="3"/>
+  <path d="M754 151H806V160H754Z" fill="#c6bfae" stroke="#8d829e" stroke-width="2"/>
+  <path d="M758 163H802V170H758Z" fill="#a69a85" stroke="#8d829e" stroke-width="2"/>
+  <path d="M764 173H796V181H764Z" fill="#756d61" stroke="#8d829e" stroke-width="2"/>
+  <path id="filament" d="M760 113Q770 92 780 113Q790 92 800 113" fill="none" stroke="#fff4c5" stroke-width="5" stroke-linecap="round" opacity=".08"/>
+  <circle id="lampCore" cx="780" cy="111" r="9" fill="#fff8dc" opacity=".08"/>
+</g>
+<text x="780" y="207" text-anchor="middle" fill="#24103f" font-size="14" font-family="Arial" font-weight="700">LAMP</text>
+<text x="56" y="395" fill="#6e6878" font-size="13" font-family="Arial">A steeper slope gives the water more drive.</text>
+</svg>
+</figure>
+
+<div class="controls">
+  <div class="control">
+    <label for="u"><span>River slope <strong>U</strong></span><output id="uout" for="u">24 V</output></label>
+    <input id="u" type="range" min="6" max="48" step="1" value="24" aria-label="River slope, modeled as voltage in volts">
+    <div class="scale"><span>Gentle · 6 V</span><span>Steep · 48 V</span></div>
+  </div>
+  <div class="control">
+    <label for="i"><span>River width <strong>I</strong></span><output id="iout" for="i">2.0 A</output></label>
+    <input id="i" type="range" min="0.5" max="3.0" step="0.1" value="2.0" aria-label="River width, modeled as current in amperes">
+    <div class="scale"><span>Narrow · 0.5 A</span><span>Wide · 3.0 A</span></div>
+  </div>
+  <div class="power" aria-live="polite">
+    <div class="formula">Modeled electrical power: <strong>P = U × I</strong></div>
+    <div class="reading"><strong id="pout">48</strong><span>W</span></div>
+    <div class="bar" aria-hidden="true"><span id="pbar"></span></div>
+    <div class="outputs">
+      <div class="metric"><span>Wheel speed</span><strong id="speedOut">20 rpm</strong></div>
+      <div class="metric"><span>Lamp brightness</span><strong id="brightnessOut">34%</strong></div>
+    </div>
+  </div>
+</div>
+</div>
+<footer><p class="note"><strong>Learning analogy only.</strong> The river width represents the amount of water flowing; the slope represents the driving potential. The wheel and lamp show a simplified energy chain. Real LED systems depend on the driver, LED load and their operating limits.</p></footer>
+</main>
+<script>
+(function(){
+  var u=document.getElementById('u'), i=document.getElementById('i');
+  var uout=document.getElementById('uout'), iout=document.getElementById('iout');
+  var pout=document.getElementById('pout'), pbar=document.getElementById('pbar');
+  var speedOut=document.getElementById('speedOut'), brightnessOut=document.getElementById('brightnessOut');
+  var bank=document.getElementById('riverBank'), water=document.getElementById('waterPath'), stream=document.getElementById('streamline');
+  var wheelAssembly=document.getElementById('wheelAssembly'), wheel=document.getElementById('wheelRotor');
+  var halo=document.getElementById('lampHalo'), rays=document.getElementById('lampRays');
+  var lampLit=document.getElementById('lampLit'), lampShell=document.getElementById('lampShell');
+  var filament=document.getElementById('filament'), lampCore=document.getElementById('lampCore');
+  var wireA=document.getElementById('wireA'), wireB=document.getElementById('wireB');
+  var baseWheelY=246, angle=0, previousFrame=null, wheelRps=0.33;
+  var maxPower=Number(u.max)*Number(i.max);
+  var prefersReducedMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function render(){
+    var volts=Number(u.value), amps=Number(i.value), watts=volts*amps;
+    var slope=(volts-Number(u.min))/(Number(u.max)-Number(u.min));
+    var relativePower=Math.max(0,Math.min(1,(watts-Number(u.min)*Number(i.min))/(maxPower-Number(u.min)*Number(i.min))));
+    var level=Math.pow(relativePower,.72);
+    var endY=188+slope*94;
+    var wheelY=endY+58;
+    var path="M40 105 C145 105 220 "+(108+slope*14)+" 300 "+(116+slope*32)+" C390 "+(125+slope*52)+" 470 "+(145+slope*82)+" 525 "+endY+" C548 "+endY+" 560 "+(endY+7)+" 580 "+(endY+16);
+    var riverWidth=24+((amps-Number(i.min))/(Number(i.max)-Number(i.min)))*42;
+
+    uout.value=volts+" V";
+    iout.value=amps.toFixed(1)+" A";
+    pout.textContent=watts.toFixed(1).replace(/\.0$/,"");
+    bank.setAttribute('d',path); water.setAttribute('d',path); stream.setAttribute('d',path);
+    water.setAttribute('stroke-width',riverWidth.toFixed(1));
+    bank.setAttribute('stroke-width',(riverWidth+48).toFixed(1));
+    stream.setAttribute('stroke-width',Math.max(2,riverWidth*.07).toFixed(1));
+
+    wheelAssembly.setAttribute('transform','translate(0 '+(wheelY-baseWheelY).toFixed(1)+')');
+    wireA.setAttribute('d','M734 '+wheelY.toFixed(1)+'V195H764V179');
+    wireB.setAttribute('d','M740 '+wheelY.toFixed(1)+'V202H774V179');
+    wheelRps=.04+level*1.05;
+    speedOut.textContent=Math.round(wheelRps*60)+' rpm';
+    var brightness=.04+level*.96;
+    brightnessOut.textContent=Math.round(brightness*100)+'%';
+    pbar.style.width=Math.min(100,watts/maxPower*100)+'%';
+
+    halo.setAttribute('opacity',(0.02+level*.92).toFixed(2));
+    rays.setAttribute('opacity',(0.04+level*.86).toFixed(2));
+    filament.setAttribute('opacity',(0.08+level*.92).toFixed(2));
+    lampCore.setAttribute('opacity',(0.08+level*.92).toFixed(2));
+    lampShell.setAttribute('fill','rgb('+Math.round(164+91*level)+','+Math.round(156+91*level)+','+Math.round(137+66*level)+')');
+    lampLit.style.filter='drop-shadow(0 0 '+(6+level*42).toFixed(0)+'px rgba(255,205,91,'+(0.04+level*.72).toFixed(2)+'))';
+    wireA.setAttribute('opacity',(0.18+level*.72).toFixed(2));
+    wireB.setAttribute('opacity',(0.18+level*.72).toFixed(2));
+    stream.style.animationDuration=(3.2-level*2.7).toFixed(2)+'s';
+  }
+
+  function animate(timestamp){
+    if(previousFrame!==null && !prefersReducedMotion){
+      angle=(angle+(timestamp-previousFrame)*wheelRps*.36)%360;
+      wheel.setAttribute('transform','rotate('+angle.toFixed(1)+' 620 '+baseWheelY+')');
+    }
+    previousFrame=timestamp;
+    requestAnimationFrame(animate);
+  }
+
+  u.addEventListener('input',render);
+  i.addEventListener('input',render);
+  render();
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>
