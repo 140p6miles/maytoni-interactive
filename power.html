@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#24103f">
+  <title>Power = Voltage × Current</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1e1b26;
+      --plum: #24103f;
+      --violet: #5b24d6;
+      --lavender: #d9cdf5;
+      --muted: #6e6878;
+      --paper: #f7f6fa;
+      --white: #ffffff;
+      --rule: #ddd8e6;
+      --warm: #ffd985;
+      --light: .2;
+      --halo-alpha: .12;
+      --halo-blur: 12px;
+      --glass-brightness: .72;
+      --core-glow: .1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: clamp(22px, 5vw, 64px) 20px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .page { width: min(1080px, 100%); margin: 0 auto; }
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--violet);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+    }
+    .intro {
+      max-width: 700px;
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.55;
+    }
+    .demo {
+      display: grid;
+      grid-template-columns: minmax(320px, .92fr) minmax(360px, 1.08fr);
+      gap: clamp(32px, 6vw, 72px);
+      align-items: center;
+      margin-top: clamp(32px, 5vw, 58px);
+    }
+    .controls { display: grid; gap: 34px; }
+    .control { display: grid; gap: 12px; }
+    .control-head { display: flex; justify-content: space-between; gap: 20px; align-items: baseline; }
+    .control-name { display: flex; gap: 10px; align-items: baseline; font-size: 19px; font-weight: 700; }
+    .symbol { color: var(--violet); font-size: 22px; font-weight: 700; }
+    .value {
+      color: var(--plum);
+      font-size: 22px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    input[type="range"] {
+      width: 100%;
+      height: 30px;
+      margin: 0;
+      accent-color: var(--violet);
+      cursor: pointer;
+    }
+    input[type="range"]:focus-visible { outline: 3px solid var(--violet); outline-offset: 4px; border-radius: 5px; }
+    .scale { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; }
+    .result {
+      margin-top: 3px;
+      padding-top: 22px;
+      border-top: 1px solid var(--rule);
+    }
+    .result-label { display: block; color: var(--muted); font-size: 15px; }
+    .result-main { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 8px; }
+    .result-main strong { color: var(--plum); font-size: clamp(42px, 6vw, 58px); line-height: 1; font-variant-numeric: tabular-nums; }
+    .formula { color: var(--muted); font-size: 17px; text-align: right; font-variant-numeric: tabular-nums; }
+    .equation { margin: 16px 0 0; color: var(--ink); font-size: 21px; font-weight: 700; }
+    .change-note { min-height: 24px; margin: 14px 0 0; color: var(--violet); font-size: 15px; line-height: 1.45; }
+    .light-stage {
+      position: relative;
+      display: grid;
+      min-height: 390px;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 4px;
+      background:
+        radial-gradient(ellipse at 50% 53%, rgba(255, 217, 133, var(--halo-alpha)) 0%, rgba(255, 217, 133, .08) 42%, transparent 72%),
+        linear-gradient(145deg, #2d1a49, #17131f 74%);
+    }
+    .light-stage::before {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 32%, rgba(0, 0, 0, .2) 100%);
+      content: "";
+      pointer-events: none;
+    }
+    .lamp-wrap { position: relative; width: min(76%, 300px); z-index: 1; }
+    .lamp-glass {
+      filter: brightness(var(--glass-brightness)) drop-shadow(0 0 var(--halo-blur) rgba(255, 217, 133, var(--halo-alpha)));
+      transform: translateY(-8px);
+      transition: filter 320ms ease;
+    }
+    .lamp-core {
+      opacity: var(--light);
+      filter: drop-shadow(0 0 18px rgba(255, 190, 45, var(--core-glow)));
+      transition: opacity 220ms ease, filter 220ms ease;
+    }
+    .lamp-base { opacity: .94; }
+    .stage-caption {
+      position: absolute;
+      right: 22px;
+      bottom: 20px;
+      left: 22px;
+      z-index: 2;
+      margin: 0;
+      color: #eee8f7;
+      font-size: 14px;
+      line-height: 1.45;
+      text-align: center;
+    }
+    .note {
+      margin: 27px 0 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    @media (max-width: 760px) {
+      body { padding-top: 32px; }
+      .demo { grid-template-columns: 1fr; gap: 28px; margin-top: 32px; }
+      .light-stage { min-height: 320px; grid-row: 1; }
+      .controls { gap: 26px; }
+      .result-main { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .formula { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Electrical fundamentals</p>
+    <h1>Power = voltage × current</h1>
+    <p class="intro">Move one slider. Keep the other value the same. Watch the power and the LED brightness change.</p>
+
+    <section class="demo" aria-label="Interactive power demonstration">
+      <div class="controls">
+        <div class="control">
+          <div class="control-head">
+            <label class="control-name" for="voltage"><span class="symbol">U</span> Voltage</label>
+            <output class="value" id="voltageValue" for="voltage">24 V</output>
+          </div>
+          <input id="voltage" type="range" min="6" max="48" step="1" value="24" aria-describedby="voltageScale">
+          <div class="scale" id="voltageScale"><span>6 V</span><span>48 V</span></div>
+        </div>
+
+        <div class="control">
+          <div class="control-head">
+            <label class="control-name" for="current"><span class="symbol">I</span> Current</label>
+            <output class="value" id="currentValue" for="current">300 mA</output>
+          </div>
+          <input id="current" type="range" min="100" max="700" step="10" value="300" aria-describedby="currentScale">
+          <div class="scale" id="currentScale"><span>100 mA</span><span>700 mA</span></div>
+        </div>
+
+        <div class="result" aria-live="polite">
+          <span class="result-label">Electrical power (P)</span>
+          <div class="result-main">
+            <strong id="powerValue">7.2 W</strong>
+            <span class="formula" id="calculation">24 V × 0.30 A</span>
+          </div>
+          <p class="equation">P = U × I</p>
+          <p class="change-note" id="changeNote">Change U or I to see the effect on power.</p>
+        </div>
+      </div>
+
+      <div class="light-stage" id="lightStage" role="img" aria-label="LED bulb illustration; brightness changes with calculated power">
+        <div class="lamp-wrap">
+          <svg viewBox="0 0 300 330" role="presentation" aria-hidden="true">
+            <defs>
+              <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ffffff"/>
+                <stop offset=".62" stop-color="#f8f3ff"/>
+                <stop offset="1" stop-color="#d9cdf5"/>
+              </linearGradient>
+              <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#dbd5e5"/>
+                <stop offset="1" stop-color="#8d829e"/>
+              </linearGradient>
+            </defs>
+            <g class="lamp-glass">
+              <path d="M150 27c-61 0-100 42-100 97 0 38 18 61 41 83 15 14 22 31 24 47h70c2-16 9-33 24-47 23-22 41-45 41-83 0-55-39-97-100-97Z" fill="url(#glass)" stroke="#ffffff" stroke-opacity=".72" stroke-width="3"/>
+              <path d="M78 120c0-38 25-65 60-74" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-opacity=".74" stroke-width="7"/>
+              <g class="lamp-core">
+                <ellipse cx="150" cy="163" rx="35" ry="24" fill="#ffd985"/>
+                <ellipse cx="150" cy="163" rx="19" ry="13" fill="#fff8df"/>
+                <path d="M150 139v48m-24-24h48" stroke="#fff6d6" stroke-linecap="round" stroke-width="4" opacity=".8"/>
+              </g>
+              <path d="M112 239h76v20h-76z" fill="#e8e2ef"/>
+            </g>
+            <g class="lamp-base">
+              <path d="M118 259h64l-5 14h-54z" fill="url(#metal)"/>
+              <path d="M123 276h54l-5 14h-44z" fill="url(#metal)"/>
+              <path d="M129 293h42l-5 14h-32z" fill="url(#metal)"/>
+              <path d="M138 310h24v9h-24z" fill="#6e6878"/>
+            </g>
+          </svg>
+        </div>
+        <p class="stage-caption">More power makes this LED brighter in the model.</p>
+      </div>
+    </section>
+
+    <p class="note"><strong>Learning model:</strong> Here, U and I can change independently to show the formula. Real LED systems must match the driver type and its limits to the LED. Brightness may not change in a straight line with watts.</p>
+  </main>
+
+  <script>
+    (() => {
+      const voltage = document.getElementById("voltage");
+      const current = document.getElementById("current");
+      const voltageValue = document.getElementById("voltageValue");
+      const currentValue = document.getElementById("currentValue");
+      const powerValue = document.getElementById("powerValue");
+      const calculation = document.getElementById("calculation");
+      const changeNote = document.getElementById("changeNote");
+      const stage = document.getElementById("lightStage");
+      const minPower = Number(voltage.min) * Number(current.min) / 1000;
+      const maxPower = Number(voltage.max) * Number(current.max) / 1000;
+      let previousPower = Number(voltage.value) * Number(current.value) / 1000;
+      const format = (n, digits = 1) => Number(n).toFixed(digits).replace(/\.0$/, "");
+
+      function update(event) {
+        const u = Number(voltage.value);
+        const currentMa = Number(current.value);
+        const currentA = currentMa / 1000;
+        const power = u * currentA;
+        voltageValue.value = `${u} V`;
+        currentValue.value = `${currentMa} mA`;
+        powerValue.textContent = `${format(power)} W`;
+        calculation.textContent = `${u} V × ${format(currentA, 2)} A`;
+
+        const ratio = Math.max(0, Math.min(1, (power - minPower) / (maxPower - minPower)));
+        const level = Math.pow(ratio, 1.35);
+        stage.style.setProperty("--light", String(0.04 + level * 0.96));
+        stage.style.setProperty("--halo-alpha", String(0.015 + level * 0.88));
+        stage.style.setProperty("--halo-blur", `${8 + level * 100}px`);
+        stage.style.setProperty("--glass-brightness", String(0.48 + level * 0.84));
+        stage.style.setProperty("--core-glow", String(0.02 + level * 0.95));
+
+        if (event && previousPower !== power) {
+          const direction = power > previousPower ? "increases" : "decreases";
+          const controlName = event.target === voltage ? "U" : "I";
+          changeNote.textContent = `Power ${direction} as ${controlName} changes. The other value stays the same.`;
+        }
+        previousPower = power;
+      }
+      voltage.addEventListener("input", update);
+      current.addEventListener("input", update);
+      update();
+    })();
+  </script>
+</body>
+</html>
