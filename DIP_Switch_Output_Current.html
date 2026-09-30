@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DIP Switch – Output Current Selection</title>
+<style>
+:root{--violet:#5b24d6;--plum:#24103f;--ink:#1e1b26;--muted:#6e6878;--lavender:#d9cdf5;--paper:#f7f6fa;--rule:#ded9e7;--white:#fff;--warm:#ffd985}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:#eeecf2;font-family:Arial,Helvetica,sans-serif;color:var(--ink);display:grid;place-items:center;user-select:none;-webkit-user-select:none}
+#frame{position:relative}
+#slide{width:1600px;height:900px;position:absolute;transform-origin:top left;background:var(--paper);overflow:hidden;padding:55px 70px}
+header{border-bottom:1px solid var(--rule);padding-bottom:25px}
+.eyebrow{font-size:15px;letter-spacing:2.5px;font-weight:700;color:var(--violet);margin-bottom:15px}
+h1{font-size:46px;letter-spacing:-1.5px;margin:0 0 12px;font-weight:700;color:var(--plum)}
+header p{font-size:22px;color:var(--muted);margin:0}
+button{font:inherit;touch-action:manipulation;cursor:pointer}
+button:focus-visible{outline:4px solid var(--violet);outline-offset:6px}
+#fullscreen{position:absolute;right:70px;top:55px;background:var(--white);color:var(--plum);border:1px solid #d1c7e2;border-radius:5px;padding:11px 15px;font-size:16px}
+#fullscreen:hover{background:#f0eafa}
+.flow{height:425px;display:grid;grid-template-columns:420px 85px 450px 85px 420px;align-items:center}
+.section-label{font-size:14px;letter-spacing:2px;color:var(--violet);font-weight:700;text-align:center}
+.dip-area{height:365px;position:relative;padding-top:24px}
+.dip-wrap{position:relative;width:290px;margin:31px auto 0;isolation:isolate}
+.module{position:relative;margin-left:64px;width:224px;height:246px;background:linear-gradient(110deg,#48375f,#2a1e3d 65%,#38294d);border-radius:9px;border:3px solid #1d142d;box-shadow:inset 2px 2px 2px #8c7ca0,inset -3px -4px 2px #1c1328,7px 11px 16px #24103f29;display:flex;gap:25px;justify-content:center;padding-top:22px}
+.module:before,.module:after{content:"";position:absolute;left:36px;right:36px;height:20px;background:linear-gradient(90deg,#81768e,#e1dce8 12%,#a79bb4 26%,transparent 27%,transparent 70%,#a79bb4 71%,#e1dce8 88%,#81768e);z-index:-1}
+.module:before{top:-20px}.module:after{bottom:-20px}
+.switch-column{text-align:center;color:#f7f4fc;font-size:20px;font-weight:700}
+.toggle{display:block;margin-top:15px;width:64px;height:149px;border:2px solid #17111f;border-radius:4px;background:linear-gradient(90deg,#1b1524,#332641 40%,#17111f);position:relative;padding:0;box-shadow:inset 3px 3px 5px #0007}
+.lever{position:absolute;top:86px;left:5px;width:50px;height:52px;border-radius:4px;background:linear-gradient(#fff,#e4dfeb);box-shadow:0 4px 4px #0008,inset 0 2px 0 #fff;transition:transform 250ms ease}
+.lever:after{content:"";position:absolute;left:9px;right:9px;top:17px;height:17px;background:repeating-linear-gradient(to bottom,#aaa2b4 0,#aaa2b4 1px,transparent 1px,transparent 5px)}
+.toggle[aria-checked="true"] .lever{transform:translateY(-80px)}
+.bit{display:block;margin-top:10px;font-size:18px;color:#e6dcf6}
+.positions{position:absolute;left:-16px;font-size:17px;font-weight:700;white-space:nowrap;color:var(--plum)}
+.on{top:65px}.off{top:146px}
+.hint{text-align:center;color:var(--muted);font-size:17px;margin-top:29px}
+.arrow{font-size:46px;font-weight:400;color:#c8b8e3;text-align:center}
+.current{text-align:center}
+.current h2{font-weight:700;font-size:25px;color:var(--plum);margin:0 0 18px}
+.reading{line-height:1;font-size:106px;letter-spacing:-5px;font-weight:700;color:var(--plum);font-variant-numeric:tabular-nums}
+.unit{font-size:40px;letter-spacing:-1px;margin-left:9px;font-weight:400;color:var(--muted)}
+.binary{font-family:Consolas,monospace;font-size:23px;margin-top:27px;color:var(--violet)}
+.caption{font-size:16px;color:var(--muted);margin-top:23px}
+.lamp-area{position:relative;height:365px;padding-top:24px}
+.lamp-stage{position:relative;height:270px;margin-top:8px;display:flex;justify-content:center;align-items:center}
+.halo{position:absolute;left:50%;top:105px;width:220px;height:220px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,#fff3c3 0%,#ffe7a1 28%,#ffdfa552 48%,#ffe9b000 72%);opacity:.25;transition:width 300ms,height 300ms,opacity 300ms;pointer-events:none}
+.bulb{width:160px;height:250px;position:relative;z-index:1;overflow:visible}
+.diffuser{fill:#d4cde0;transition:fill 300ms,filter 300ms}
+.lamp-name{text-align:center;font-size:18px;color:var(--muted);margin-top:4px}
+.bottom{border-top:1px solid var(--rule);display:grid;grid-template-columns:530px 1fr;gap:70px;padding-top:24px}
+table{border-collapse:collapse;width:100%;font-size:19px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:13px;letter-spacing:1.5px;color:var(--muted);padding:0 17px 8px}
+td{padding:7px 17px;height:35px;border-bottom:1px solid #e4e0ea}
+tbody tr.active{background:#ece5fa;color:var(--plum);font-weight:700}
+td:first-child{width:50%;font-family:Consolas,monospace;letter-spacing:6px}
+.lesson{padding-top:35px}
+.lesson p{font-size:25px;line-height:1.45;margin:0 0 17px;max-width:700px;color:var(--plum);font-weight:700}
+.lesson small{font-size:17px;line-height:1.5;color:var(--muted);display:block;max-width:650px}
+footer{position:absolute;bottom:24px;left:70px;right:70px;display:flex;justify-content:space-between;color:var(--muted);font-size:13px;letter-spacing:1.3px}
+#notice{position:absolute;right:70px;top:104px;font-size:14px;color:var(--muted);max-width:300px;text-align:right}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="frame"><main id="slide">
+<header><div class="eyebrow">LED DRIVER FUNDAMENTALS</div><h1>DIP Switch – Output Current Selection</h1><p>Different switch combinations select different LED driver output currents.</p></header>
+<button id="fullscreen" type="button" aria-label="Enter fullscreen presentation mode">⛶ &nbsp; Fullscreen</button><span id="notice" role="status"></span>
+<section class="flow" aria-label="DIP switch position to driver current to LED brightness">
+<div class="dip-area"><div class="section-label">01 / DIP SETTING</div><div class="dip-wrap"><div class="positions on">ON / 1</div><div class="positions off">OFF / 0</div><div class="module">
+<div class="switch-column">SW1<button class="toggle" id="sw1" type="button" role="switch" aria-checked="false" aria-label="SW1"><span class="lever"></span></button><span class="bit" id="bit1">0</span></div>
+<div class="switch-column">SW2<button class="toggle" id="sw2" type="button" role="switch" aria-checked="false" aria-label="SW2"><span class="lever"></span></button><span class="bit" id="bit2">0</span></div>
+</div></div><div class="hint">Click either switch to change its position</div></div>
+<div class="arrow" aria-hidden="true">→</div>
+<div class="current" aria-live="polite" aria-atomic="true"><h2>Output Current</h2><div class="reading"><span id="value">150</span><span class="unit">mA</span></div><div class="binary" id="binary">SW1: 0 &nbsp; SW2: 0</div><div class="caption">DIP Setting → Driver Current</div></div>
+<div class="arrow" aria-hidden="true">→</div>
+<div class="lamp-area"><div class="section-label">03 / LED LIGHT OUTPUT</div><div class="lamp-stage"><div class="halo" id="halo"></div>
+<svg class="bulb" viewBox="0 0 160 250" role="img" aria-labelledby="lamp-title"><title id="lamp-title">LED bulb at lowest brightness</title><defs><linearGradient id="body-metal"><stop stop-color="#9da39e"/><stop offset=".3" stop-color="#edf0e9"/><stop offset=".7" stop-color="#c8ccc5"/><stop offset="1" stop-color="#939b93"/></linearGradient><linearGradient id="base-metal"><stop stop-color="#6c746c"/><stop offset=".35" stop-color="#c0c5bc"/><stop offset=".65" stop-color="#858f83"/><stop offset="1" stop-color="#535f54"/></linearGradient></defs>
+<path id="diffuser" class="diffuser" d="M29 123 C17 108 11 92 11 74 C11 37 41 10 80 10 C119 10 149 37 149 74 C149 92 143 108 131 123 Z" stroke="#c9ccbe" stroke-width="1.3"/>
+<path d="M29 123 H131 C120 146 111 168 108 184 H52 C49 168 40 146 29 123Z" fill="url(#body-metal)" stroke="#aab1a7" stroke-width="1"/>
+<path d="M51 183 H109 V215 L100 228 H60 L51 215Z" fill="url(#base-metal)"/>
+<g stroke="#727e71" stroke-width="3"><path d="M52 190 L108 185"/><path d="M52 200 L108 195"/><path d="M52 210 L108 205"/><path d="M58 220 L105 215"/></g><path d="M64 229 H96 L90 237 H70Z" fill="#3c473d"/><path d="M37 56 Q48 33 72 31" stroke="#fff" stroke-opacity=".45" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg></div><div class="lamp-name" id="level">Lowest brightness</div></div>
+</section>
+<section class="bottom"><table aria-label="DIP switch current reference"><thead><tr><th>DIP SETTING · SW1 / SW2</th><th>OUTPUT CURRENT</th></tr></thead><tbody><tr data-index="0" class="active" aria-current="true"><td>0 &nbsp;0</td><td>150 mA</td></tr><tr data-index="1"><td>1 &nbsp;0</td><td>200 mA</td></tr><tr data-index="2"><td>0 &nbsp;1</td><td>250 mA</td></tr><tr data-index="3"><td>1 &nbsp;1</td><td>300 mA</td></tr></tbody></table><div class="lesson"><p>Higher selected current → higher LED light output</p><small>Illustrative settings for a compatible LED load.<br>Actual switch mappings depend on the driver model.</small></div></section>
+<footer><span>TECHNICAL TRAINING / CURRENT SELECTION</span><span>2 SWITCHES · 4 SETTINGS</span></footer>
+</main></div>
+<script>
+(()=>{'use strict';const slide=document.getElementById('slide'),frame=document.getElementById('frame');function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);frame.style.width=1600*s+'px';frame.style.height=900*s+'px';slide.style.transform='scale('+s+')'}addEventListener('resize',fit);fit();const switches=[document.getElementById('sw1'),document.getElementById('sw2')];const states=[0,0];const levels=[{value:150,label:'Lowest brightness',size:220,opacity:.25,fill:'#d9d7c2',glow:2},{value:200,label:'Low–medium brightness',size:285,opacity:.46,fill:'#ebe4c5',glow:8},{value:250,label:'Medium–high brightness',size:350,opacity:.72,fill:'#fff0c9',glow:16},{value:300,label:'Highest brightness',size:410,opacity:1,fill:'#fffbed',glow:26}];function render(){const index=states[0]+states[1]*2,l=levels[index];switches.forEach((s,i)=>{s.setAttribute('aria-checked',String(!!states[i]));document.getElementById('bit'+(i+1)).textContent=states[i]});document.getElementById('value').textContent=l.value;document.getElementById('binary').textContent='SW1: '+states[0]+'   SW2: '+states[1];document.getElementById('level').textContent=l.label;document.getElementById('lamp-title').textContent='LED bulb at '+l.label.toLowerCase();const halo=document.getElementById('halo');halo.style.width=halo.style.height=l.size+'px';halo.style.opacity=l.opacity;const diffuser=document.getElementById('diffuser');diffuser.style.fill=l.fill;diffuser.style.filter='drop-shadow(0 0 '+l.glow+'px rgba(255,226,145,.7))';document.querySelectorAll('tbody tr').forEach((row,i)=>{row.classList.toggle('active',i===index);if(i===index)row.setAttribute('aria-current','true');else row.removeAttribute('aria-current')})}switches.forEach((s,i)=>s.addEventListener('click',()=>{states[i]=1-states[i];render()}));render();const fs=document.getElementById('fullscreen');fs.addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();else throw Error('unavailable')}catch(e){document.getElementById('notice').textContent='Use your browser’s fullscreen command.'}});document.addEventListener('fullscreenchange',()=>{fs.textContent=document.fullscreenElement?'Exit fullscreen':'⛶  Fullscreen';fs.setAttribute('aria-label',document.fullscreenElement?'Exit fullscreen presentation mode':'Enter fullscreen presentation mode');fit()});})();
+</script>
+</body></html>
